@@ -1,33 +1,187 @@
 ﻿<Controls:MetroWindow x:Class="Forecaster.MainWindow"
-                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                      xmlns:viewmodels="clr-namespace:Forecaster.ViewModels"
-                      xmlns:views="clr-namespace:Forecaster.Views"
-                      Title="Forecaster" TitleCaps="False" Height="450" Width="800"
-                      Loaded="Window_Loaded">
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:vm="clr-namespace:Forecaster.ViewModel"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"
+        Title="Forecaster" TitleCaps="False" Height="530" MinHeight="530" Width="830" MinWidth="830">
     <Window.Resources>
-        <DataTemplate x:Name="searchViewTemplate" DataType="{x:Type viewmodels:SearchViewModel}">
-            <views:SearchView DataContext="{Binding}"/>
-        </DataTemplate>
+        <Style x:Key="CityButton">
+            <Setter Property="Control.FontFamily" Value="{DynamicResource OpenSansLight}" />
+            <Setter Property="Control.FontSize" Value="11" />
+            <Setter Property="Control.Margin" Value="3 1" />
+            <Setter Property="Control.Padding" Value="3" />
+            <Setter Property="Control.Cursor" Value="Hand" />
+            <Setter Property="Control.Background" Value="PaleGreen" />
+        </Style>
+        <Style x:Key="SemiTransparent">
+            <Setter Property="Control.Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="White" Opacity="0.6" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CenterItem">
+            <Setter Property="Control.HorizontalAlignment" Value="Center" />
+            <Setter Property="Control.VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="StretchItem">
+            <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Control.VerticalAlignment" Value="Stretch" />
+        </Style>
+        <Style x:Key="FirstGradientBg" BasedOn="{StaticResource StretchItem}">
+            <Setter Property="Control.Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="White" Offset="0.0" />
+                        <GradientStop Color="LightCyan" Offset="1" />
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SecondGradientBg" BasedOn="{StaticResource StretchItem}">
+            <Setter Property="Control.Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="LightCyan" Offset="0.0" />
+                        <GradientStop Color="PaleTurquoise" Offset="1" />
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ThirdGradientBg" BasedOn="{StaticResource StretchItem}">
+            <Setter Property="Control.Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="PaleTurquoise" Offset="0.0" />
+                        <GradientStop Color="PaleGreen" Offset="1" />
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
-    <Grid>
+    <Grid DataContext="{Binding MainViewModel, Source={StaticResource Locator}}">
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="Loaded">
+                <cmd:EventToCommand Command="{Binding Mode=OneWay, Path=GetInitialForecastCommand}" PassEventArgsToCommand="True" />
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="4*" />
+            <RowDefinition Height="5*" />
+            <RowDefinition Height="5*" />
         </Grid.RowDefinitions>
-        <WrapPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button HorizontalAlignment="Center"
-                Height="45" Width="45" Margin="5,0,5,5" BorderBrush="Black"
-                Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}">
-                <Image Width="30" Height="30" Source="icons/thermometer.png" />
-            </Button>
-            <Button HorizontalAlignment="Center"
-                Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}"
-                Height="45" Width="45" Margin="5,0,5,5" BorderBrush="Black">
-                <Image Width="30" Height="30" Source="icons/search.png" />
-            </Button>
+        <WrapPanel Grid.Row="0" Name="CitiesPanel" Style="{StaticResource CenterItem}">
+            <Button Style="{StaticResource CityButton}" Command="{Binding GetForecastCommand}" CommandParameter="sb"
+                    Click="ChangeCity">Bielsko-Biała</Button>
+            <Button Style="{StaticResource CityButton}" Command="{Binding GetForecastCommand}" CommandParameter="ww"
+                    Click="ChangeCity">Warszawa</Button>
+            <Button Style="{StaticResource CityButton}" Command="{Binding GetForecastCommand}" CommandParameter="kr"
+                    Click="ChangeCity">Kraków</Button>
+            <Button Style="{StaticResource CityButton}" Command="{Binding GetForecastCommand}" CommandParameter="el"
+                    Click="ChangeCity">Łódź</Button>
+            <Button Style="{StaticResource CityButton}" Command="{Binding GetForecastCommand}" CommandParameter="dw"
+                    Click="ChangeCity">Wrocław</Button>
+            <Button Style="{StaticResource CityButton}" Command="{Binding GetForecastCommand}" CommandParameter="po"
+                    Click="ChangeCity">Poznań</Button>
+            <Button Style="{StaticResource CityButton}" Command="{Binding GetForecastCommand}" CommandParameter="gd"
+                    Click="ChangeCity">Gdańsk</Button>
+            <Button Style="{StaticResource CityButton}" Command="{Binding GetForecastCommand}" CommandParameter="zs"
+                    Click="ChangeCity">Szczecin</Button>
+            <Button Style="{StaticResource CityButton}" Command="{Binding GetForecastCommand}" CommandParameter="cb"
+                    Click="ChangeCity">Bydgoszcz</Button>
+            <Button Style="{StaticResource CityButton}" Command="{Binding GetForecastCommand}" CommandParameter="lu"
+                    Click="ChangeCity">Lublin</Button>
+            <Button Style="{StaticResource CityButton}" Command="{Binding GetForecastCommand}" CommandParameter="bi"
+                    Click="ChangeCity">Białystok</Button>
+            <Button Style="{StaticResource CityButton}" Command="{Binding GetForecastCommand}" CommandParameter="sk"
+                    Click="ChangeCity">Katowice</Button>
         </WrapPanel>
-        <ContentControl Grid.Row="1" Content="{Binding}" />
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding ForecastDetailsCollection}" Style="{StaticResource FirstGradientBg}" Name="DetailsPanel">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Style="{StaticResource CenterItem}">
+                        <WrapPanel Style="{StaticResource CenterItem}">
+                            <Border Style="{StaticResource CenterItem}">
+                                <TextBlock FontFamily="{DynamicResource OpenSans}" FontSize="24" Text="{Binding CityName}" TextAlignment="Center" />
+                            </Border>
+                            <Image Source="{Binding IconUrl}" Width="75" Height="45" />
+                        </WrapPanel>
+                        <WrapPanel Style="{StaticResource CenterItem}" MaxWidth="700">
+                            <TextBlock FontFamily="{DynamicResource OpenSansLight}" FontSize="18" TextAlignment="Center"
+                                       Text="{Binding Description, StringFormat={}{0}\,}" Margin="0 0 5 0" />
+                            <TextBlock FontFamily="{DynamicResource OpenSansLight}" FontSize="18" TextAlignment="Center" 
+                                       Text="{Binding StormChance, StringFormat={}prawdopodobieństwo burzy: {0}%\,}" Margin="0 0 5 0" />
+                            <TextBlock FontFamily="{DynamicResource OpenSansLight}" FontSize="18" TextAlignment="Center"
+                                       Text="{Binding AirQuality, StringFormat={}status jakości powietrza: {0}\,}" Margin="0 0 5 0" />
+                            <TextBlock FontFamily="{DynamicResource OpenSansLight}" FontSize="18" TextAlignment="Center"
+                                       Text="{Binding Pressure, StringFormat={}ciśnienie: {0}hPa}" />
+                        </WrapPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Style="{StaticResource CenterItem}" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+        <StackPanel Grid.Row="2" Style="{StaticResource SecondGradientBg}">
+            <TextBlock FontFamily="{DynamicResource OpenSans}" FontSize="22" Style="{StaticResource CenterItem}">Najbliższe 8h</TextBlock>
+            <ItemsControl ItemsSource="{Binding HourlyForecastCollection}" Style="{StaticResource CenterItem}" Name="HourlyPanel">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border CornerRadius="5" Padding="5 2 5 8" Margin="5" Style="{StaticResource SemiTransparent}">
+                            <StackPanel Style="{StaticResource CenterItem}">
+                                <Image Source="{Binding IconUrl}" Width="75" Height="45" />
+                                <TextBlock FontFamily="{DynamicResource OpenSans}" FontSize="13"
+                                           Text="{Binding TimeStamp, StringFormat={}{0:h tt}}" TextAlignment="Center" />
+                                <TextBlock FontFamily="{DynamicResource OpenSans}" FontSize="13"
+                                           Text="{Binding Temperature, StringFormat={}{0}°C}" TextAlignment="Center" />
+                                <TextBlock FontFamily="{DynamicResource OpenSans}" FontSize="13"
+                                           Text="{Binding RainChance, StringFormat={}Deszcz: {0}%}" TextAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Style="{StaticResource CenterItem}" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Style="{StaticResource ThirdGradientBg}">
+            <TextBlock FontFamily="{DynamicResource OpenSans}" Style="{StaticResource CenterItem}" FontSize="22">Najbliższe dni</TextBlock>
+            <ItemsControl ItemsSource="{Binding DailyForecastCollection}" Style="{StaticResource CenterItem}" Name="DailyPanel">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border CornerRadius="5" Padding="8 2 8 5" Margin="5" Style="{StaticResource SemiTransparent}">
+                            <StackPanel Style="{StaticResource CenterItem}">
+                                <Image Source="{Binding IconUrl}" Width="75" Height="45" />
+                                <TextBlock FontFamily="{DynamicResource OpenSans}" FontSize="13"
+                                           Text="{Binding TimeStamp, StringFormat={}{0:dd.MM}}" TextAlignment="Center"/>
+                                <WrapPanel>
+                                    <TextBlock FontFamily="{DynamicResource OpenSans}" FontSize="13" Margin="0 0 5 0"
+                                           Text="{Binding MinTemperature, StringFormat={}Min: {0}°C\,}" TextAlignment="Center" />
+                                    <TextBlock FontFamily="{DynamicResource OpenSans}" FontSize="13"
+                                           Text="{Binding MaxTemperature, StringFormat={}Max: {0}°C}" TextAlignment="Center"/>
+                                </WrapPanel>
+                                <TextBlock FontFamily="{DynamicResource OpenSans}" FontSize="13"
+                                           Text="{Binding RainChance, StringFormat={}Deszcz: {0}%}" TextAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Style="{StaticResource CenterItem}" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </StackPanel>
     </Grid>
 </Controls:MetroWindow>
+    
